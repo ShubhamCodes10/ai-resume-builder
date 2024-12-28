@@ -1,16 +1,36 @@
 "use client";
 
-import React, { useState } from 'react';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-import { ResumeProvider } from '@/context/ResumeContext';
-import ResumeEditor from '@/components/ResumeEditor';
-import ResumePreview from '@/components/ResumePreview';
-import ResumeManager from '@/components/ResumeManager';
-import { Layout, FileText, Palette, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
+import { Layout, FileText, Palette } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { ResumeProvider } from '@/context/ResumeContext';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
+// Dynamically import components that need window
+const DndProvider = dynamic(
+  () => import('react-dnd').then(mod => mod.DndProvider),
+  { ssr: false }
+);
+
+
+
+const ResumeEditor = dynamic(
+  () => import('@/components/ResumeEditor'),
+  { ssr: false }
+);
+
+const ResumePreview = dynamic(
+  () => import('@/components/ResumePreview'),
+  { ssr: false }
+);
+
+const ResumeManager = dynamic(
+  () => import('@/components/ResumeManager'),
+  { ssr: false }
+);
 
 const initialResumeData = {
   personalInfo: {
@@ -39,10 +59,15 @@ const templates = [
 ];
 
 function App() {
+  const [isClient, setIsClient] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState("modern");
   const [savedTemplates, setSavedTemplates] = useState([
     { id: "default", name: "Default", data: initialResumeData },
   ]);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleSaveTemplate = (name: string, data: any) => {
     setSavedTemplates((prevTemplates) => [
@@ -50,6 +75,10 @@ function App() {
       { id: Date.now().toString(), name, data },
     ]);
   };
+
+  if (!isClient) {
+    return null; // or a loading spinner
+  }
 
   return (
     <ResumeProvider>
@@ -98,7 +127,6 @@ function App() {
 
           <main className="max-w-8xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Editor Section */}
               <Card className="bg-gray-900 border-gray-800">
                 <CardContent className="p-6">
                   <div className="mb-6 flex items-center justify-between">
@@ -114,7 +142,6 @@ function App() {
                 </CardContent>
               </Card>
 
-              {/* Preview Section */}
               <div className="lg:sticky lg:top-24 lg:self-start h-screen overflow-hidden">
                 <Card className="bg-gray-900 border-gray-800 h-full">
                   <CardContent className="p-0 h-full">
@@ -126,7 +153,6 @@ function App() {
                   </CardContent>
                 </Card>
               </div>
-
             </div>
           </main>
 

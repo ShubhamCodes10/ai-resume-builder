@@ -1,27 +1,38 @@
 "use client";
 
-import { useCallback } from "react";
-import { pdfjs } from "react-pdf";
+import { useCallback, useEffect, useState } from "react";
+import type { PDFDocumentProxy } from "pdfjs-dist";
 import { ExtractedData } from "@/types/ExtractedDataTypes";
 
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+// Don't set worker source here - we'll do it in a useEffect
 
-// Custom Hook
 export const useParseDoc = () => {
+  const [pdfjs, setPdfjs] = useState<typeof import('pdfjs-dist')>();
+
+  useEffect(() => {
+    // Dynamic import of pdfjs and set up worker
+    import('pdfjs-dist').then((pdfjs) => {
+      pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+      setPdfjs(pdfjs);
+    });
+  }, []);
+
   const extractTextFromPDF = useCallback(async (file: File): Promise<ExtractedData | null> => {
-    if (!file) return null;
+    if (!file || !pdfjs) return null;
 
     try {
       // Load PDF document
-      const pdf = await pdfjs.getDocument(URL.createObjectURL(file)).promise;
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf: PDFDocumentProxy = await pdfjs.getDocument(arrayBuffer).promise;
       let allText = "";
 
       // Loop through each page
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
-        const pageText = textContent.items.map((item: any) => item.str).join(" ");
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(" ");
         allText += pageText + "\n";
       }
 
@@ -128,7 +139,7 @@ export const useParseDoc = () => {
       console.error("Error parsing PDF:", error);
       return null;
     }
-  }, []);
+  }, [pdfjs]);
 
   return { extractTextFromPDF };
 };
