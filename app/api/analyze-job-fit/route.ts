@@ -5,11 +5,7 @@ import { StructuredOutputParser } from "langchain/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { z } from "zod";
 import prisma from '@/app/lib/prisma';
-import { auth, currentUser } from '@clerk/nextjs/server';
-
-export const config = {
-  runtime: 'edge',
-};
+import {auth, currentUser} from '@clerk/nextjs/server';
 
 const model = new ChatGoogleGenerativeAI({
   modelName: "gemini-1.5-flash",
@@ -121,20 +117,23 @@ const promptTemplate = new PromptTemplate({
   }
 });
 
-const analysisChain = RunnableSequence.from([promptTemplate, model, parser]);
+const analysisChain = RunnableSequence.from([
+  promptTemplate,
+  model,
+  parser
+]);
 
 export async function POST(req: NextRequest) {
   try {
     const user = await currentUser();
     const userId = user?.id;
-
+    
     if (!userId) {
       return NextResponse.json(
         { error: 'User not authenticated' },
         { status: 401 }
       );
     }
-
     const { resumeText, jobDescription } = await req.json();
 
     if (!resumeText || !jobDescription) {
@@ -144,7 +143,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Wait for the full response from the AI model
     const analysis = await analysisChain.invoke({
       resume: resumeText,
       jobDescription: jobDescription
@@ -159,7 +157,6 @@ export async function POST(req: NextRequest) {
       }
     };
 
-    // Store results in the database
     await prisma.$transaction([
       prisma.userAnalysis.create({
         data: {
@@ -169,6 +166,7 @@ export async function POST(req: NextRequest) {
           analysisTimestamp: new Date(response.metadata.analysisTimestamp),
           confidenceScore: response.metadata.confidenceScore,
           modelVersion: response.metadata.modelVersion,
+          
           strengths: response.strengths,
           areasForImprovement: response.areasForImprovement,
           recommendations: response.recommendations,
@@ -188,11 +186,14 @@ export async function POST(req: NextRequest) {
       })
     ]);
 
+    console.log(response);
+    
+
     return NextResponse.json(response);
     
   } catch (error) {
     console.error('Error in job fit analysis:', error);
-
+    
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
@@ -230,3 +231,4 @@ function calculateConfidenceScore(analysis: z.infer<typeof jobAnalysisSchema>) {
   
   return Math.max(0, Math.min(100, score));
 }
+
