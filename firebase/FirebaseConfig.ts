@@ -1,13 +1,12 @@
 import { initializeApp } from "firebase/app";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDf-zI71LlVjj5gdcnlYvj5P3xBnBUgVAQ",
-  authDomain: "fir-31914.firebaseapp.com",
-  databaseURL: "https://fir-31914-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "fir-31914",
-  storageBucket: "fir-31914.appspot.com",
-  messagingSenderId: "943833159563",
-  appId: "1:943833159563:web:0f6f2be111060b5122818e"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
 // Initialize Firebase
