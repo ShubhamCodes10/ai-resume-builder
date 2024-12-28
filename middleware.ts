@@ -27,5 +27,6 @@ export const config = {
     '/api/delete-single-user-analysis',
     '/api/chat-with-ai',
     '/api/save-templates',
+    '/api/parse-pdf',
   ],
 }
