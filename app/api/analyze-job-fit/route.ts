@@ -7,6 +7,11 @@ import { z } from "zod";
 import prisma from '@/app/lib/prisma';
 import {auth, currentUser} from '@clerk/nextjs/server';
 
+export const config = {
+  runtime: 'edge',
+};
+
+
 const model = new ChatGoogleGenerativeAI({
   modelName: "gemini-1.5-flash",
   apiKey: process.env.GEMINI_API_KEY!,
