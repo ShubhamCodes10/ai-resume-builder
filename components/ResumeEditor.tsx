@@ -54,9 +54,10 @@ const DraggableSection: React.FC<DraggableSectionProps> = ({ type, index, onReor
     <div
       ref={ref}
       className={cn(
-        "group p-6 mb-4 bg-white rounded-xl border border-gray-200 shadow-sm transition-all duration-300",
+        "group p-6 mb-4 bg-[#1a2644]/50 rounded-xl border border-blue-900/30 shadow-sm backdrop-blur-sm transition-all duration-300",
         "hover:border-blue-200 hover:shadow-md",
-        isDragging ? "opacity-50" : "opacity-100"
+        isDragging ? "opacity-50" : "opacity-100",
+        className 
       )}
     >
       <div className="flex justify-between items-center mb-4">
@@ -265,7 +266,8 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ points, onChange, className
             <Input
               type="text"
               name="name"
-              value={resumeData.personalInfo.fullName}
+              value={resumeData?.personalInfo?.fullName}
+              onChange={handlePersonalInfoChange}
               placeholder="Full Name"
               className="w-full bg-[#1a2644]/30 border-blue-900/30 text-white placeholder:text-gray-400"
             />
@@ -358,7 +360,7 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ points, onChange, className
         </div>
 
         {/* Education */}
-        <div className="space-y-4 bg-[#1a2644]">
+        <div className="space-y-4 ">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
               Education

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { ResumeProvider } from '@/context/ResumeContext';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Button } from '@/components/ui/button';
 
 // Dynamically import components that need window
 const DndProvider = dynamic(
@@ -77,7 +78,12 @@ function App() {
   };
 
   if (!isClient) {
-    return null; // or a loading spinner
+    return null; 
+  }
+
+  const handlePerformClear = () => {
+    localStorage.removeItem('resumeData');
+    window.location.reload();
   }
 
   return (
@@ -121,6 +127,11 @@ function App() {
                   templates={savedTemplates}
                   onSaveTemplate={handleSaveTemplate}
                 />
+                <div>
+                  <Button onClick={handlePerformClear} variant={"destructive"}>
+                    Clear Editor
+                  </Button>
+                </div>
               </div>
             </div>
           </header>
