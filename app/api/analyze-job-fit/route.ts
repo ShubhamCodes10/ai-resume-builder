@@ -123,74 +123,85 @@ const analysisChain = RunnableSequence.from([
   parser
 ]);
 
+async function generateAnalysis(resumeText: string, jobDescription: string) {
+  const analysis = await analysisChain.invoke({
+    resume: resumeText,
+    jobDescription: jobDescription
+  });
+
+  const metadata = {
+    analysisTimestamp: new Date().toISOString(),
+    modelVersion: "gemini-1.5-flash",
+    confidenceScore: calculateConfidenceScore(analysis)
+  };
+
+  return {
+    ...analysis,
+    metadata
+  };
+}
+
+
+async function saveAnalysisToDatabase(userId: string, analysis: any) {
+  return prisma.$transaction([
+    prisma.userAnalysis.create({
+      data: {
+        userId,
+        jobFitPercentage: analysis.jobFitPercentage,
+        overallAssessment: analysis.overallAssessment,
+        analysisTimestamp: new Date(analysis.metadata.analysisTimestamp),
+        confidenceScore: analysis.metadata.confidenceScore,
+        modelVersion: analysis.metadata.modelVersion,
+        strengths: analysis.strengths,
+        areasForImprovement: analysis.areasForImprovement,
+        recommendations: analysis.recommendations,
+        skillsMatch: analysis.skillsMatch,
+        experienceAnalysis: analysis.experienceAnalysis,
+        projectAnalysis: analysis.projectAnalysis,
+        atsImprovements: analysis.atsImprovements,
+      }
+    }),
+    prisma.user.update({
+      where: { id: userId },
+      data: {
+        dailyUsageCounter: {
+          increment: 1
+        }
+      }
+    })
+  ]);
+}
+
 export async function POST(req: NextRequest) {
   try {
+    // Input validation
     const user = await currentUser();
-    const userId = user?.id;
-    
-    if (!userId) {
+    if (!user?.id) {
       return NextResponse.json(
         { error: 'User not authenticated' },
         { status: 401 }
       );
     }
-    const { resumeText, jobDescription } = await req.json();
 
+    const { resumeText, jobDescription } = await req.json();
     if (!resumeText || !jobDescription) {
       return NextResponse.json(
-        { error: 'Missing resume text or job description' }, 
+        { error: 'Missing resume text or job description' },
         { status: 400 }
       );
     }
 
-    const analysis = await analysisChain.invoke({
-      resume: resumeText,
-      jobDescription: jobDescription
+    // Generate analysis and save to database concurrently
+    const analysis = await generateAnalysis(resumeText, jobDescription);
+    // Note: We're not awaiting the database operation before sending the response
+    saveAnalysisToDatabase(user.id, analysis).catch(error => {
+      console.error('Error saving to database:', error);
+      // Continue execution even if database save fails
     });
 
-    const response = {
-      ...analysis,
-      metadata: {
-        analysisTimestamp: new Date().toISOString(),
-        modelVersion: "gemini-1.5-flash",
-        confidenceScore: calculateConfidenceScore(analysis)
-      }
-    };
+    return NextResponse.json(analysis);
 
-    await prisma.$transaction([
-      prisma.userAnalysis.create({
-        data: {
-          userId: userId,
-          jobFitPercentage: response.jobFitPercentage,
-          overallAssessment: response.overallAssessment,
-          analysisTimestamp: new Date(response.metadata.analysisTimestamp),
-          confidenceScore: response.metadata.confidenceScore,
-          modelVersion: response.metadata.modelVersion,
-          
-          strengths: response.strengths,
-          areasForImprovement: response.areasForImprovement,
-          recommendations: response.recommendations,
-          skillsMatch: response.skillsMatch,
-          experienceAnalysis: response.experienceAnalysis,
-          projectAnalysis: response.projectAnalysis,
-          atsImprovements: response.atsImprovements,
-        }
-      }),
-      prisma.user.update({
-        where: { id: userId },
-        data: {
-          dailyUsageCounter: {
-            increment: 1
-          }
-        }
-      })
-    ]);
 
-    console.log(response);
-    
-
-    return NextResponse.json(response);
-    
   } catch (error) {
     console.error('Error in job fit analysis:', error);
     
@@ -213,6 +224,8 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+
 
 function calculateConfidenceScore(analysis: z.infer<typeof jobAnalysisSchema>) {
   let score = 100;
