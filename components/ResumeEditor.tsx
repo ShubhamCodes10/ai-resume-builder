@@ -203,11 +203,12 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ points, onChange, className
 
   const handlePersonalInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    const updatedPersonalInfo = {
-      ...resumeData.personalInfo,
-      [name]: value
-    };
-    updateResumeData({ personalInfo: updatedPersonalInfo });
+    updateResumeData({
+      personalInfo: {
+        ...resumeData.personalInfo,
+        [name]: value
+      }
+    });
   };
 
   const handleSummaryChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -265,8 +266,8 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ points, onChange, className
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               type="text"
-              name="name"
-              value={resumeData?.personalInfo?.fullName}
+              name="fullName"
+              value={resumeData.personalInfo.fullName}
               onChange={handlePersonalInfoChange}
               placeholder="Full Name"
               className="w-full bg-[#1a2644]/30 border-blue-900/30 text-white placeholder:text-gray-400"

@@ -7,8 +7,8 @@ export const templateStyles = {
       links: "text-blue-800 hover:text-blue-600 hover:underline transition duration-300",
     },
     classic: {
-      heading: "text-stone-800 font-serif border-b-2 border-stone-800 pb-2 mb-4 text-xl font-semibold",
-      section: "mt-4",
+      heading: "text-stone-800 font-serif border-b-2 border-stone-800 pb-1 mb-2 text-xl font-semibold",
+      section: "mt-1",
       name: "text-3xl font-serif text-stone-900 font-normal",
       text: "text-stone-700 font-serif leading-relaxed",
       links: "text-stone-800 hover:text-stone-600 hover:underline transition duration-300",
@@ -36,7 +36,7 @@ export const templateStyles = {
     },
     professional: {
       heading: "text-gray-800 font-bold text-xl uppercase tracking-tight",
-      section: "border-b-2 border-gray-300 py-3 mb-6",
+      section: "border-b-2 border-gray-300 py-2 mb-1",
       name: "text-3xl font-medium text-gray-900",
       text: "text-gray-700 leading-relaxed",
       links: "text-blue-600 hover:text-blue-500 hover:underline transition duration-300",

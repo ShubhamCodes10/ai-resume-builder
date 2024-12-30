@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 import html2pdf from 'html2pdf.js';
 import { templateStyles } from '@/templates/templateStyles';
 
-
 const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }> = ({ 
   selectedTemplate = 'modern' 
 }) => {
@@ -52,8 +51,8 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
   };
 
   const renderSection = (title: string, children: React.ReactNode) => (
-    <div className={cn("mb-3", styles.section)}>
-      <h2 className={cn("text-sm font-bold pb-1 mb-1", styles.heading)}>{title}</h2>
+    <div className={cn("mb-1", styles.section)}>
+      <h2 className={cn("text-sm font-bold pb-0.5 mb-0.5", styles.heading)}>{title}</h2>
       {children}
     </div>
   );
@@ -108,7 +107,7 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
           }}
         >
           {/* Personal Info */}
-          <div className="text-center mb-3">
+          <div className="text-center ">
             <h1 className={cn("mb-1", styles.name)}>
               {resumeData.personalInfo.fullName.toUpperCase()}
             </h1>
@@ -147,14 +146,14 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
           {/* Experience */}
           {resumeData.experience.length > 0 && renderSection("Professional Experience",
             resumeData.experience.map((exp, index) => (
-              <div key={index} className="mb-2">
-                <div className="flex justify-between items-baseline mb-0.5">
+              <div key={index} className=" last:mb-0">
+                <div className="flex justify-between items-baseline ">
                   <h3 className={cn("text-xs font-bold", styles.text)}>{exp.role}</h3>
                   <span className={cn("text-xs opacity-75", styles.text)}>{exp.startDate} - {exp.endDate}</span>
                 </div>
                 <p className={cn("text-xs mb-0.5", styles.text)}>{exp.company}, {exp.location}</p>
                 {exp.responsibilities && exp.responsibilities.length > 0 && (
-                  <ul className={cn("list-disc list-outside ml-4 text-xs space-y-0.5", styles.text)}>
+                  <ul className={cn("list-disc list-outside ml-4 text-xs space-y-0.25", styles.text)}>
                     {exp.responsibilities.map((resp, respIndex) => (
                       <li key={respIndex}>{resp.replace(/•/g, '').trim()}</li>
                     ))}
@@ -167,7 +166,7 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
           {/* Projects */}
           {resumeData.projects.length > 0 && renderSection("Projects",
             resumeData.projects.map((project, index) => (
-              <div key={index} className="mb-2">
+              <div key={index} className="mb-1 last:mb-0">
                 <div className="flex justify-between items-baseline mb-0.5">
                   <h3 className={cn("text-xs font-bold", styles.text)}>{project.name}</h3>
                   <div className="text-xs space-x-2">
@@ -183,9 +182,9 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
                     )}
                   </div>
                 </div>
-                <p className={cn("text-xs mb-2", styles.text)}>{project.description}</p>
+                <p className={cn("text-xs mb-1", styles.text)}>{project.description}</p>
                 {project.points && project.points.length > 0 && (
-                  <ul className={cn("list-disc list-outside ml-4 text-xs space-y-0.5", styles.text)}>
+                  <ul className={cn("list-disc list-outside ml-4 text-xs space-y-0.25", styles.text)}>
                     {project.points.map((point, pointIndex) => (
                       <li key={pointIndex}>{point.replace(/•/g, '').trim()}</li>
                     ))}
@@ -198,7 +197,7 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
           {/* Education */}
           {resumeData.education.length > 0 && renderSection("Education",
             resumeData.education.map((edu, index) => (
-              <div key={index} className="mb-2">
+              <div key={index} className=" last:mb-0">
                 <div className="flex justify-between items-baseline">
                   <h3 className={cn("text-xs font-bold", styles.text)}>{edu.degree}</h3>
                   <span className={cn("text-xs opacity-75", styles.text)}>{edu.startDate} - {edu.endDate}</span>
@@ -212,7 +211,7 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
           {/* Certifications */}
           {resumeData.certifications.length > 0 && renderSection("Achievements OR Certifications",
             resumeData.certifications.map((cert, index) => (
-              <div key={index} className="mb-1">
+              <div key={index} className="mb-0.5 last:mb-0">
                 <span className={cn("text-xs font-semibold", styles.text)}>{cert.name}</span>
                 <span className={cn("text-xs opacity-75", styles.text)}> - {cert.issuer}, {cert.issueDate}</span>
               </div>
