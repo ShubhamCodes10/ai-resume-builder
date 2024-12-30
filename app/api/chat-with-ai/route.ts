@@ -3,6 +3,7 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { PromptTemplate } from "@langchain/core/prompts";
 import prisma from "@/app/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
+import { fetchAllJobAnalysisByUserId } from "@/firebase/firebaseSetup";
 
 
 const model = new ChatGoogleGenerativeAI({
@@ -67,40 +68,11 @@ export async function POST(req: NextRequest){
                 { status: 401 }
               );
         }
-
-        const analysisCount = await prisma.userAnalysis.count({
-            where: { userId }
-        });
-        
-        if (analysisCount === 0) {
-            return NextResponse.json(
-                { error: 'At least one scan is required to perform AI chat.' },
-                { status: 404 }
-            );
-        }
         
 
-        const analysis = await prisma.userAnalysis.findMany({
-            where: {
-                userId: userId
-            },
-            orderBy: {
-                createdAt: 'desc'
-            },
-            select: {
-                id: true,
-                jobFitPercentage: true,
-                overallAssessment: true,
-                strengths: true,
-                areasForImprovement: true,
-                recommendations: true,
-                skillsMatch: true,
-                experienceAnalysis: true,
-                projectAnalysis: true,
-            }
-        })
-
-
+        const analysis = await fetchAllJobAnalysisByUserId(userId);
+        console.log('My analysis', analysis);
+        
         const {prompt} = await req.json();
         if(!prompt){
             return NextResponse.json(
@@ -116,6 +88,8 @@ export async function POST(req: NextRequest){
         });
 
         const response = await model.call([{ role: 'user', content: formattedPrompt }]);
+        console.log(response);
+        
         return NextResponse.json({ answer: response });
     } catch (error) {
         console.error(error);

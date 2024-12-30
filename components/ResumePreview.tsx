@@ -7,6 +7,7 @@ import { Download, Loader2, Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import html2pdf from 'html2pdf.js';
 import { templateStyles } from '@/templates/templateStyles';
+import { toast } from '@/hooks/use-toast';
 
 const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }> = ({ 
   selectedTemplate = 'modern' 
@@ -43,6 +44,9 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
       };
 
       await html2pdf().from(element).set(options).save();
+      toast({
+        description: 'PDF generated successfully!',
+      })
     } catch (error) {
       console.error('Error generating PDF:', error);
     } finally {

@@ -1,4 +1,4 @@
-import prisma from "@/app/lib/prisma";
+import { fetchSingleJobAnalysisByUserId } from "@/firebase/firebaseSetup";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -26,28 +26,7 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        const singleUserAnalysis = await prisma.userAnalysis.findUnique({
-            where: {
-                id: parseInt(id),
-                userId: userId, // Ensure the analysis belongs to the current user
-            },
-            select: {
-                id: true,
-                jobFitPercentage: true,
-                overallAssessment: true,
-                analysisTimestamp: true,
-                confidenceScore: true,
-                modelVersion: true,
-                areasForImprovement: true,
-                atsImprovements: true,
-                experienceAnalysis: true,
-                projectAnalysis: true,
-                recommendations: true,
-                skillsMatch: true,
-                strengths: true,
-                createdAt: true,
-            },
-        });
+        const singleUserAnalysis = await fetchSingleJobAnalysisByUserId(userId, id);
 
         if (!singleUserAnalysis) {
             return NextResponse.json(

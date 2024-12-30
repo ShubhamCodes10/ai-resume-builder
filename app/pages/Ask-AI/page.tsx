@@ -122,6 +122,8 @@ export default function App() {
       }
 
       const data = await res.json()
+      console.log(data);
+      
       const aiResponse = data.answer.kwargs?.content || "No valid response found."
       const structuredResponse = structureAIResponse(aiResponse)
       const aiMessage: Message = {

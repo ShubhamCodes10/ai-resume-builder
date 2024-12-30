@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from '@/hooks/use-toast';
 
 interface Strength {
   skill: string;
@@ -118,6 +119,10 @@ const JobAnalysis = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await analyzeJobFit();
+    toast({
+      title: 'Analysis completed',
+      description: 'Your job fit analysis has been completed successfully',
+    })
   };
 
   const analyzeJobFit = async () => {

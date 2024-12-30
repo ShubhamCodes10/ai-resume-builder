@@ -178,13 +178,14 @@ function AIAnalysisSection() {
           </div>
           <div className={cn("relative group transition-all duration-1000 ease-in-out", 
             inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10")}>
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+            <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-50 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
             <div className="relative bg-[#0f1833] p-2 rounded-lg">
               <Carousel className="w-full max-w-2xl mx-auto">
                 <CarouselContent>
                   {['/jobfitAnalysis-part1.png', '/jobfitAnalysis-part2.png'].map((src, index) => (
                     <CarouselItem key={index}>
                       <Card className="border-0 bg-transparent">
+                     
                         <CardContent className="flex items-center justify-center p-0">
                           <div className="relative w-full aspect-[16/9] overflow-hidden rounded-lg">
                             <Image 

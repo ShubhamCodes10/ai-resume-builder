@@ -9,6 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { ResumeProvider } from '@/context/ResumeContext';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Button } from '@/components/ui/button';
+import { toast } from '@/hooks/use-toast';
 
 const DndProvider = dynamic(
   () => import('react-dnd').then(mod => mod.DndProvider),
@@ -84,6 +85,10 @@ function Page() {
 
   const handlePerformClear = () => {
     localStorage.removeItem('resumeData');
+    toast({
+      title: "Cleared",
+      description: "The editor has been cleared",
+    })
     window.location.reload();
   }
 

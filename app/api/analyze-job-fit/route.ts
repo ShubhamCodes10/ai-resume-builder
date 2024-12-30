@@ -4,8 +4,8 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { StructuredOutputParser } from "langchain/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
 import { z } from "zod";
-import prisma from '@/app/lib/prisma';
 import {auth, currentUser} from '@clerk/nextjs/server';
+import { saveAnalysisToDatabase } from '@/firebase/firebaseSetup';
 
 const model = new ChatGoogleGenerativeAI({
   modelName: "gemini-1.5-flash",
@@ -142,39 +142,9 @@ async function generateAnalysis(resumeText: string, jobDescription: string) {
 }
 
 
-async function saveAnalysisToDatabase(userId: string, analysis: any) {
-  return prisma.$transaction([
-    prisma.userAnalysis.create({
-      data: {
-        userId,
-        jobFitPercentage: analysis.jobFitPercentage,
-        overallAssessment: analysis.overallAssessment,
-        analysisTimestamp: new Date(analysis.metadata.analysisTimestamp),
-        confidenceScore: analysis.metadata.confidenceScore,
-        modelVersion: analysis.metadata.modelVersion,
-        strengths: analysis.strengths,
-        areasForImprovement: analysis.areasForImprovement,
-        recommendations: analysis.recommendations,
-        skillsMatch: analysis.skillsMatch,
-        experienceAnalysis: analysis.experienceAnalysis,
-        projectAnalysis: analysis.projectAnalysis,
-        atsImprovements: analysis.atsImprovements,
-      }
-    }),
-    prisma.user.update({
-      where: { id: userId },
-      data: {
-        dailyUsageCounter: {
-          increment: 1
-        }
-      }
-    })
-  ]);
-}
 
 export async function POST(req: NextRequest) {
   try {
-    // Input validation
     const user = await currentUser();
     if (!user?.id) {
       return NextResponse.json(
@@ -191,20 +161,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate analysis and save to database concurrently
     const analysis = await generateAnalysis(resumeText, jobDescription);
-    // Note: We're not awaiting the database operation before sending the response
-    saveAnalysisToDatabase(user.id, analysis).catch(error => {
+    const analysisWithId = { ...analysis, id: user.id };
+    saveAnalysisToDatabase(user.id, analysisWithId).catch(error => {
       console.error('Error saving to database:', error);
-      // Continue execution even if database save fails
     });
 
     return NextResponse.json(analysis);
 
-
   } catch (error) {
     console.error('Error in job fit analysis:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
@@ -224,7 +191,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
 
 
 function calculateConfidenceScore(analysis: z.infer<typeof jobAnalysisSchema>) {

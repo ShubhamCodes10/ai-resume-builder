@@ -21,6 +21,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { convertTimestampToDate } from '@/app/utils/convertTimeStamptoDate';
 
 interface SkillMatch {
   skill: string;
@@ -32,7 +33,7 @@ interface Analysis {
   id: number;
   jobFitPercentage: number;
   overallAssessment: string;
-  analysisTimestamp: string;
+  analysisTimestamp: any;
   confidenceScore: number;
   modelVersion: string;
   areasForImprovement: Array<{ area: string; suggestion: string }>;
@@ -67,6 +68,8 @@ export default function DetailedScan() {
 
         const data = await response.json();
         if (!data.data) throw new Error('No data received from API');
+        console.log("detail scan hu", data);
+
 
         setAnalysis(data.data);
       } catch (error) {
@@ -216,10 +219,8 @@ export default function DetailedScan() {
               <div className="flex items-center space-x-2 text-gray-300">
                 <Calendar className="h-4 w-4" />
                 <span>
-                  {new Date(analysis.analysisTimestamp).toLocaleDateString(undefined, {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
+                  {convertTimestampToDate(analysis.analysisTimestamp).toLocaleDateString('en-IN', {
+                    timeZone: 'Asia/Kolkata',
                   })}
                 </span>
               </div>

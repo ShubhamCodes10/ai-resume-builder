@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { BrainIcon, FileText, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 function Navbar() {
   const { user, isLoaded } = useUser();
@@ -18,8 +19,16 @@ function Navbar() {
       await signOut();
       localStorage.clear();
       router.push('/');
+      toast({
+        title: 'Logged out',
+        description: 'You have been successfully logged out.',
+      })
     } catch (error) {
       console.error('Logout failed:', error);
+      toast({
+        title: 'Logout failed',
+        description: 'An error occurred while trying to log you out.',
+      })
     }
   };
 

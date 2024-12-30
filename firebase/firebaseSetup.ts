@@ -1,6 +1,7 @@
 import { firebaseApp } from '@/firebase/FirebaseConfig'
 import { getStorage, ref, uploadBytes, getDownloadURL, getBlob } from "firebase/storage";
-import { getFirestore, doc, setDoc, collection, query, where, getDocs, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, collection, query, where, getDocs, getDoc, addDoc, Timestamp } from "firebase/firestore";
+import { JobAnalysis } from '@/types/analysis';
 
 
 const storage = getStorage(firebaseApp);
@@ -11,6 +12,13 @@ interface Template {
   id: string;
   name: string;
   data: any;
+}
+
+interface Contact {
+  name: string;
+  email: string;
+  Image: string;
+  message: string;
 }
 
 export const uploadFiletoFirebase = async (file: File, path: string) => {
@@ -119,3 +127,106 @@ export const editResumeUsingFirebase = async (userId: string, resumeId: string, 
     throw new Error('Unable to update resume');
   }
 };
+
+export const AddContactData = async (userData: Contact) => {
+  try {
+      const dataRef = collection(db, 'contactData');
+      const docRef = await addDoc(dataRef, {
+          userData
+      });
+      return docRef.id;
+  } catch (error: any) {
+      console.error("Error adding comment: ", error);
+      throw error;
+  }
+}
+
+export const uploadImage = async (file: File): Promise<string> => {
+  const storageRef = ref(storage, `ContactImages/${file.name}`);
+  await uploadBytes(storageRef, file); 
+
+  
+  const downloadURL = await getDownloadURL(storageRef);
+  return downloadURL;
+};
+
+export async function saveFeedbackToFirestore(name: string, email: string, feedback: string) {
+  try {
+    const docRef = await addDoc(collection(db, "userFeedback"), {
+      name,
+      email,
+      feedback,
+      createdAt: new Date(),
+    });
+    console.log("Feedback submitted with ID: ", docRef.id);
+    return docRef.id;
+  } catch (error: any) {
+    throw new Error("Error saving feedback: " + error.message);
+  }
+}
+
+export async function saveAnalysisToDatabase(userId: string, analysis: JobAnalysis) {
+  try {
+    const analysisRef = collection(db, 'userAnalysis');
+    const analysisData = {
+      userId,
+      jobFitPercentage: analysis.jobFitPercentage,
+      overallAssessment: analysis.overallAssessment,
+      analysisTimestamp: Timestamp.fromDate(new Date(analysis.metadata.analysisTimestamp)),
+      confidenceScore: analysis.metadata.confidenceScore,
+      modelVersion: analysis.metadata.modelVersion,
+      strengths: analysis.strengths,
+      areasForImprovement: analysis.areasForImprovement,
+      recommendations: analysis.recommendations,
+      skillsMatch: analysis.skillsMatch,
+      experienceAnalysis: analysis.experienceAnalysis,
+      projectAnalysis: analysis.projectAnalysis,
+      atsImprovements: analysis.atsImprovements,
+    };
+
+    // Add the analysis data to Firestore
+    await addDoc(analysisRef, analysisData);
+
+    
+  } catch (error) {
+    console.error('Error saving analysis to Firebase:', error);
+  }
+}
+
+export async function fetchAllJobAnalysisByUserId(userId: string): Promise<JobAnalysis[]> {
+  try {
+    const jobAnalysisRef = collection(db, 'userAnalysis');
+    const q = query(jobAnalysisRef, where('userId', '==', userId));
+    const querySnapshot = await getDocs(q);
+
+    const jobAnalyses: JobAnalysis[] = [];
+    querySnapshot.forEach(doc => {
+      const data = doc.data() as JobAnalysis;
+      jobAnalyses.push({
+        ...data,
+        id: doc.id,
+      });
+    });
+
+    return jobAnalyses;
+  } catch (error) {
+    console.error('Error fetching job analysis records:', error);
+    throw new Error('Failed to fetch job analysis records.');
+  }
+}
+
+export async function fetchSingleJobAnalysisByUserId(userId: string, recordId: string): Promise<JobAnalysis | null> {
+  try {
+    const jobAnalysisDocRef = doc(db, 'userAnalysis', recordId);
+    const docSnap = await getDoc(jobAnalysisDocRef);
+
+    if (docSnap.exists() && docSnap.data()?.userId === userId) {
+      return docSnap.data() as JobAnalysis;
+    } else {
+      return null; 
+    }
+  } catch (error) {
+    console.error('Error fetching job analysis record:', error);
+    throw new Error('Failed to fetch job analysis record.');
+  }
+}

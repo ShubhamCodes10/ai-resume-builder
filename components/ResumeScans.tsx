@@ -8,10 +8,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { convertTimestampToDate } from '@/app/utils/convertTimeStamptoDate';
 
 interface ScanSummary {
-  id: number;
-  analysisTimestamp: string;
+  id: any;
+  analysisTimestamp: any;
   jobFitPercentage: number;
   confidenceScore: number;
   modelVersion: string;
@@ -31,6 +32,8 @@ export default function ResumeScans() {
         const response = await fetch('/api/fetch-user-analysis');
         if (!response.ok) throw new Error('Failed to fetch analyses');
         const data = await response.json();
+        console.log("Here is my scans", data);
+
         setScans(data.data.map((scan: any) => ({
           id: scan.id,
           analysisTimestamp: scan.analysisTimestamp,
@@ -39,6 +42,7 @@ export default function ResumeScans() {
           modelVersion: scan.modelVersion,
           overallAssessment: scan.overallAssessment
         })));
+
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Failed to load analyses');
       } finally {
@@ -47,6 +51,9 @@ export default function ResumeScans() {
     }
     fetchScans();
   }, []);
+
+  console.log(scans);
+
 
   if (loading) {
     return (
@@ -81,7 +88,7 @@ export default function ResumeScans() {
           New Analysis
         </Button>
       </div>
-      
+
       <div className="relative">
         <div className="overflow-x-auto pb-6">
           <div className="flex gap-6 min-w-full">
@@ -102,18 +109,21 @@ export default function ResumeScans() {
                 </CardContent>
               </Card>
             ) : (
-              scans.map((scan) => (
-                <Card 
-                  key={scan.id} 
+              scans.map((scan, index) => (
+                <Card
+                  key={scan.id || index}
                   className="flex-shrink-0 w-[400px] bg-[#37456b] border-blue-900/30 backdrop-blur-sm hover:bg-[#253661] transition-all duration-300"
                 >
                   <CardHeader className="border-b border-blue-900/30">
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl text-white">Analysis #{scan.id}</CardTitle>
+                      <CardTitle className="text-xl text-white">Analysis #{index + 1}</CardTitle>
                       <span className="text-sm text-gray-300 flex items-center">
                         <Calendar className="w-4 h-4 mr-2" />
-                        {new Date(scan.analysisTimestamp).toLocaleDateString()}
+                        {convertTimestampToDate(scan.analysisTimestamp).toLocaleDateString('en-IN', {
+                          timeZone: 'Asia/Kolkata',
+                        })}
                       </span>
+
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6 space-y-6">
@@ -125,7 +135,7 @@ export default function ResumeScans() {
                         </div>
                         <Progress value={scan.jobFitPercentage} className="h-2 bg-gray-600" />
                       </div>
-                      
+
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-sm font-medium text-gray-300">Confidence</span>
@@ -134,13 +144,13 @@ export default function ResumeScans() {
                         <Progress value={scan.confidenceScore} className="h-2 bg-gray-600" />
                       </div>
                     </div>
-                    
+
                     <div className="space-y-4">
                       <p className="text-sm text-gray-300 line-clamp-2">{scan.overallAssessment}</p>
                       <div className="flex items-center justify-between">
                         <Link href={`/detailed-scan/${scan.id}`}>
                           <Button variant="ghost" className="text-blue-400 hover:text-blue-900 group">
-                            View Details
+                            Open Analysis
                             <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
                           </Button>
                         </Link>
@@ -152,7 +162,7 @@ export default function ResumeScans() {
             )}
           </div>
         </div>
-        
+
         {scans.length > 0 && (
           <>
             <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#0f1833] to-transparent pointer-events-none" />

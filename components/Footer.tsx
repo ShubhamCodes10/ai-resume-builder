@@ -1,5 +1,5 @@
 import React from 'react'
-import { Facebook, Twitter, Linkedin } from 'lucide-react'
+import { Facebook, Twitter, Linkedin, Link2Icon } from 'lucide-react'
 
 function Footer() {
   return (
@@ -16,16 +16,16 @@ function Footer() {
   
           {/* Navigation Links */}
           <div className="flex flex-col md:flex-row items-center md:space-x-8 space-y-4 md:space-y-0">
-            <a href="#features" className="text-sm text-gray-300 hover:text-white transition-colors">
-              Features
+            <a href="/pages/Ask-AI" className="text-sm text-gray-300 hover:text-white transition-colors">
+              Chat with AI
             </a>
-            <a href="#templates" className="text-sm text-gray-300 hover:text-white transition-colors">
-              Templates
+            <a href="/pages/Analyse-Job-Fit" className="text-sm text-gray-300 hover:text-white transition-colors">
+              Your Analysis
             </a>
-            <a href="#pricing" className="text-sm text-gray-300 hover:text-white transition-colors">
-              Pricing
+            <a href="/pages/Feedback" className="text-sm text-gray-300 hover:text-white transition-colors">
+              Give your Feedback
             </a>
-            <a href="#contact" className="text-sm text-gray-300 hover:text-white transition-colors">
+            <a href="/pages/Contact-Me" className="text-sm text-gray-300 hover:text-white transition-colors">
               Contact Us
             </a>
           </div>
@@ -33,16 +33,16 @@ function Footer() {
           {/* Social Media Links */}
           <div className="flex space-x-6">
             <a
-              href="https://facebook.com"
+              href="https://shubGupta.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors"
-              aria-label="Facebook"
+              aria-label="Personal Website"
             >
-              <Facebook className="w-6 h-6" />
+              <Link2Icon className="w-6 h-6" />
             </a>
             <a
-              href="https://twitter.com"
+              href="https://x.com/i_m_shubham45"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white transition-colors"
@@ -50,7 +50,7 @@ function Footer() {
             >
               <Twitter className="w-6 h-6" />
             </a>
-            <a
+            {/* <a
               href="https://linkedin.com"
               target="_blank"
               rel="noopener noreferrer"
@@ -58,7 +58,7 @@ function Footer() {
               aria-label="LinkedIn"
             >
               <Linkedin className="w-6 h-6" />
-            </a>
+            </a> */}
           </div>
         </div>
   
