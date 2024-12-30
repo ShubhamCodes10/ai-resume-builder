@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { Layout, FileText, Palette } from 'lucide-react';
+import { Layout, FileText, Palette, Brush, Briefcase } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
@@ -10,13 +10,10 @@ import { ResumeProvider } from '@/context/ResumeContext';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Button } from '@/components/ui/button';
 
-// Dynamically import components that need window
 const DndProvider = dynamic(
   () => import('react-dnd').then(mod => mod.DndProvider),
   { ssr: false }
 );
-
-
 
 const ResumeEditor = dynamic(
   () => import('@/components/ResumeEditor'),
@@ -57,11 +54,15 @@ const templates = [
   { id: "modern", name: "Modern", icon: Layout },
   { id: "classic", name: "Classic", icon: FileText },
   { id: "creative", name: "Creative", icon: Palette },
+  { id: "minimal", name: "Minimal", icon: FileText },
+  { id: "elegant", name: "Elegant", icon: Brush },
+  { id: "professional", name: "Professional", icon: Briefcase },
 ];
 
-function App() {
+
+function Page() {
   const [isClient, setIsClient] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState("modern");
+  const [selectedTemplate, setSelectedTemplate] = useState<"modern" | "classic" | "creative">("modern");
   const [savedTemplates, setSavedTemplates] = useState([
     { id: "default", name: "Default", data: initialResumeData },
   ]);
@@ -101,9 +102,9 @@ function App() {
                 </h1>
               </div>
               <div className="flex items-center space-x-6">
-                <div className="flex items-center space-x-3 bg-gray-800/50 rounded-lg p-2">
-                  <span className="text-sm font-medium text-gray-300">Template</span>
-                  <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                <div className="flex items-center space-x-3  rounded-lg p-2">
+                  <span className="text-sm font-medium text-gray-300">Template Styles</span>
+                  <Select value={selectedTemplate} onValueChange={(value: string) => setSelectedTemplate(value as "modern" | "classic" | "creative")}>
                     <SelectTrigger className="w-[140px] bg-gray-800 border-gray-700 text-white">
                       <SelectValue />
                     </SelectTrigger>
@@ -158,7 +159,7 @@ function App() {
                   <CardContent className="p-0 h-full">
                     <div className="bg-white h-full overflow-y-auto overflow-x-auto custom-scrollbar">
                       <div className="inline-block min-w-full">
-                        <ResumePreview />
+                        <ResumePreview selectedTemplate={selectedTemplate} />
                       </div>
                     </div>
                   </CardContent>
@@ -193,4 +194,5 @@ function App() {
   );
 }
 
-export default App;
+export default Page;
+

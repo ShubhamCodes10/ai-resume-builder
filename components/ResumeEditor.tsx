@@ -328,7 +328,7 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ points, onChange, className
             Professional Summary
           </h3>
           <AiChecker
-            data={resumeData.summary}
+            data={resumeData?.summary}
             format='paras'
             sectionType='summary'
             onApply={(newSummary) => updateResumeData({ summary: newSummary as string })}
@@ -578,7 +578,7 @@ const ResumeEditor: React.FC<ResumeEditorProps> = ({ points, onChange, className
                     Key Points
                   </label>
                   <AiChecker
-                    data={project.points.join('\n')}
+                    data={project?.points.join('\n')}
                     format='points'
                     sectionType='project'
                     onApply={(newPoints) => handleProjectPointsChange(index, Array.isArray(newPoints) ? newPoints : newPoints.split('\n'))}

@@ -51,7 +51,7 @@ function Dashboard() {
           <Card className="bg-[#1a2644]/50 border-blue-900/30 backdrop-blur-sm hover:bg-[#1a2644]/70 transition-all duration-300">
             <CardContent className="p-8">
               <Button
-                onClick={() => router.push('/Dashboard/userPreference')}
+                onClick={() => router.push('/pages/resumepreview')}
                 className="w-full h-full min-h-[200px] bg-transparent hover:bg-blue-600/10 border-2 border-blue-500/30 hover:border-blue-400 group"
               >
                 <div className="flex flex-col items-center space-y-4">

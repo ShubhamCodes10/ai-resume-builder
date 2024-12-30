@@ -53,7 +53,6 @@ function AiChecker({
 
   const handleApplyContent = () => {
     if (format === 'points') {
-      // Split the content into an array of points, filtering out empty lines
       const points = generatedContent
         .split('\n')
         .map(point => point.trim())
