@@ -68,7 +68,6 @@ export default function DetailedScan() {
 
         const data = await response.json();
         if (!data.data) throw new Error('No data received from API');
-        console.log("detail scan hu", data);
 
 
         setAnalysis(data.data);
@@ -81,28 +80,40 @@ export default function DetailedScan() {
     fetchAnalysis();
   }, [id]);
 
+
   const deleteAnalysis = async () => {
-    try {
-      const response = await fetch(`/api/delete-single-user-analysis?id=${id}`, {
-        method: 'DELETE',
-      });
-
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Failed to delete analysis');
-      }
-
-      router.push('/Dashboard');
-      toast({ description: 'Analysis deleted successfully' });
-    } catch (error) {
+    if (!id) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : 'Failed to delete analysis',
-        variant: 'destructive',
+        description: "Invalid analysis ID",
+        variant: "destructive",
+      });
+      return;
+    }
+    try {
+      const response = await fetch(`/api/delete-single-user-analysis?id=${id}`, {
+        method: "DELETE",
+      });
+  
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete analysis");
+      }
+  
+      toast({ description: "Analysis deleted successfully" });
+      router.push("/Dashboard");
+    } catch (error) {
+      console.error("Error deleting analysis:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete analysis",
+        variant: "destructive",
       });
     }
   };
+  
+
+
 
   if (loading) {
     return (

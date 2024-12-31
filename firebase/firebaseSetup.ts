@@ -1,6 +1,6 @@
 import { firebaseApp } from '@/firebase/FirebaseConfig'
 import { getStorage, ref, uploadBytes, getDownloadURL, getBlob } from "firebase/storage";
-import { getFirestore, doc, setDoc, collection, query, where, getDocs, getDoc, addDoc, Timestamp } from "firebase/firestore";
+import { getFirestore, doc, setDoc, collection, query, where, getDocs, getDoc, addDoc, Timestamp, deleteDoc } from "firebase/firestore";
 import { JobAnalysis } from '@/types/analysis';
 
 
@@ -228,5 +228,19 @@ export async function fetchSingleJobAnalysisByUserId(userId: string, recordId: s
   } catch (error) {
     console.error('Error fetching job analysis record:', error);
     throw new Error('Failed to fetch job analysis record.');
+  }
+}
+
+export async function deleteSingleJobAnalysisByUserId(
+  userId: string,
+  recordId: string
+): Promise<void> {
+  try {
+    const scanDocRef = doc(db, "userAnalysis", `${recordId}`); 
+    await deleteDoc(scanDocRef);
+    console.log(`Scan with ID: ${recordId} for user ID: ${userId} successfully deleted.`);
+  } catch (error: any) {
+    console.error("Error deleting scan:", error);
+    throw new Error("Failed to delete scan. Please try again.");
   }
 }

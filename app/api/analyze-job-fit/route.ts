@@ -126,20 +126,24 @@ const analysisChain = RunnableSequence.from([
 async function generateAnalysis(resumeText: string, jobDescription: string) {
   const analysis = await analysisChain.invoke({
     resume: resumeText,
-    jobDescription: jobDescription
+    jobDescription: jobDescription,
   });
+
+  const jobFitPercentage = calculateJobFitPercentage(analysis);
 
   const metadata = {
     analysisTimestamp: new Date().toISOString(),
     modelVersion: "gemini-1.5-flash",
-    confidenceScore: calculateConfidenceScore(analysis)
+    confidenceScore: calculateConfidenceScore(analysis),
   };
 
   return {
     ...analysis,
-    metadata
+    jobFitPercentage,
+    metadata,
   };
 }
+
 
 
 
@@ -210,4 +214,22 @@ function calculateConfidenceScore(analysis: z.infer<typeof jobAnalysisSchema>) {
   
   return Math.max(0, Math.min(100, score));
 }
+
+function calculateJobFitPercentage(analysis: z.infer<typeof jobAnalysisSchema>) {
+  let score = 100;
+
+  if (analysis.strengths.length === 0) score -= 10;
+  if (analysis.areasForImprovement.length === 0) score -= 10;
+  if (analysis.skillsMatch.technical.length === 0) score -= 15;
+  if (analysis.skillsMatch.soft.length === 0) score -= 10;
+  if (analysis.experienceAnalysis.length === 0) score -= 20;
+  if (analysis.projectAnalysis.length === 0) score -= 15;
+  if (analysis.experienceRelevance.score < 50) score -= 10; 
+  if (analysis.educationFit.score < 50) score -= 10; 
+  if (analysis.cultureFit.score < 50) score -= 10; 
+  if (analysis.atsImprovements.length > 5) score -= 5; 
+
+  return Math.max(0, Math.min(100, score));
+}
+
 

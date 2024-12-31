@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2Icon, AlertCircle, Calendar, Target, Trophy, ChevronRight, Plus } from 'lucide-react';
+import { AlertCircle, Calendar, Target, ChevronRight, Plus } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { convertTimestampToDate } from '@/app/utils/convertTimeStamptoDate';
@@ -32,7 +33,6 @@ export default function ResumeScans() {
         const response = await fetch('/api/fetch-user-analysis');
         if (!response.ok) throw new Error('Failed to fetch analyses');
         const data = await response.json();
-        console.log("Here is my scans", data);
 
         setScans(data.data.map((scan: any) => ({
           id: scan.id,
@@ -52,15 +52,58 @@ export default function ResumeScans() {
     fetchScans();
   }, []);
 
-  console.log(scans);
-
+  const SkeletonCard = () => (
+    <Card className="flex-shrink-0 w-[400px] bg-[#37456b] border-blue-900/30 backdrop-blur-sm">
+      <CardHeader className="border-b border-blue-900/30">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-6 w-32 bg-gray-700/50" />
+          <Skeleton className="h-4 w-24 bg-gray-700/50" />
+        </div>
+      </CardHeader>
+      <CardContent className="pt-6 space-y-6">
+        <div className="space-y-4">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Skeleton className="h-4 w-24 bg-gray-700/50" />
+              <Skeleton className="h-4 w-12 bg-gray-700/50" />
+            </div>
+            <Skeleton className="h-2 w-full bg-gray-700/50" />
+          </div>
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Skeleton className="h-4 w-24 bg-gray-700/50" />
+              <Skeleton className="h-4 w-12 bg-gray-700/50" />
+            </div>
+            <Skeleton className="h-2 w-full bg-gray-700/50" />
+          </div>
+        </div>
+        <div className="space-y-4">
+          <Skeleton className="h-16 w-full bg-gray-700/50" />
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-9 w-32 bg-gray-700/50" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center space-y-4">
-          <Loader2Icon className="h-8 w-8 animate-spin text-blue-400 mx-auto" />
-          <p className="text-gray-300">Loading your analyses...</p>
+      <div className="space-y-8">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-48 bg-gray-700/50" />
+          <Skeleton className="h-10 w-32 bg-gray-700/50" />
+        </div>
+        <div className="relative">
+          <div className="overflow-x-auto pb-6">
+            <div className="flex gap-6 min-w-full">
+              {[1, 2, 3].map((index) => (
+                <SkeletonCard key={index} />
+              ))}
+            </div>
+          </div>
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#0f1833] to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0f1833] to-transparent pointer-events-none" />
         </div>
       </div>
     );
@@ -123,7 +166,6 @@ export default function ResumeScans() {
                           timeZone: 'Asia/Kolkata',
                         })}
                       </span>
-
                     </div>
                   </CardHeader>
                   <CardContent className="pt-6 space-y-6">
