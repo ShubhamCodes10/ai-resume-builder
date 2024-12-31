@@ -28,5 +28,7 @@ export const config = {
     '/api/chat-with-ai',
     '/api/save-templates',
     '/api/parse-pdf',
+    '/pages/Feedback',
+    '/pages/Contact-Me'
   ],
 }

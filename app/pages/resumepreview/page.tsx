@@ -60,16 +60,17 @@ const templates = [
   { id: "professional", name: "Professional", icon: Briefcase },
 ];
 
-
 function Page() {
   const [isClient, setIsClient] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<"modern" | "classic" | "creative">("modern");
-  const [savedTemplates, setSavedTemplates] = useState([
-    { id: "default", name: "Default", data: initialResumeData },
-  ]);
+  const [savedTemplates, setSavedTemplates] = useState([ { id: "default", name: "Default", data: initialResumeData } ]);
+  const [isMobile, setIsMobile] = useState(false); 
 
   useEffect(() => {
     setIsClient(true);
+    if (window.innerWidth < 1024) {
+      setIsMobile(true); 
+    }
   }, []);
 
   const handleSaveTemplate = (name: string, data: any) => {
@@ -80,7 +81,7 @@ function Page() {
   };
 
   if (!isClient) {
-    return null; 
+    return null;
   }
 
   const handlePerformClear = () => {
@@ -88,7 +89,7 @@ function Page() {
     toast({
       title: "Cleared",
       description: "The editor has been cleared",
-    })
+    });
     window.location.reload();
   }
 
@@ -96,82 +97,96 @@ function Page() {
     <ResumeProvider>
       <DndProvider backend={HTML5Backend}>
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
-          <header className="bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 py-4 px-6 sticky top-0 z-50">
-            <div className="max-w-7xl mx-auto flex justify-between items-center">
-              <div className="flex items-center space-x-3">
-                <div className="bg-white/10 p-2 rounded-lg">
-                  <FileText className="h-6 w-6 text-white" />
-                </div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  Resume Builder
-                </h1>
-              </div>
-              <div className="flex items-center space-x-6">
-                <div className="flex items-center space-x-3  rounded-lg p-2">
-                  <span className="text-sm font-medium text-gray-300">Template Styles</span>
-                  <Select value={selectedTemplate} onValueChange={(value: string) => setSelectedTemplate(value as "modern" | "classic" | "creative")}>
-                    <SelectTrigger className="w-[140px] bg-gray-800 border-gray-700 text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-700">
-                      {templates.map((template) => (
-                        <SelectItem
-                          key={template.id}
-                          value={template.id}
-                          className="text-white hover:bg-gray-700"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <template.icon className="h-4 w-4" />
-                            <span>{template.name}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <ResumeManager
-                  templates={savedTemplates}
-                  onSaveTemplate={handleSaveTemplate}
-                />
-                <div>
-                  <Button onClick={handlePerformClear} variant={"destructive"}>
-                    Clear Editor
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </header>
-
-          <main className="max-w-8xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="bg-gray-900 border-gray-800">
-                <CardContent className="p-6">
-                  <div className="mb-6 flex items-center justify-between">
+          {isMobile ? (
+           <div className="flex justify-center items-center h-full bg-gradient-to-br from-gray-900 to-gray-800 text-center p-8">
+           <div className="bg-gray-900/70 text-white rounded-lg shadow-xl p-8 max-w-lg mx-auto">
+             <h2 className="text-2xl font-semibold mb-4">Mobile devices are not supported</h2>
+             <p className="text-lg mb-6">To create and edit your resume, please switch to a tablet or desktop for a better experience.</p>
+             <button className="bg-gray-800 hover:bg-gray-700 text-white py-2 px-6 rounded-md text-lg font-semibold transition-colors duration-300">
+               Switch to Desktop
+             </button>
+           </div>
+         </div>
+          ) : (
+            <>
+              <header className="bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 py-4 px-6 sticky top-0 z-50">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-white/10 p-2 rounded-lg">
+                      <FileText className="h-6 w-6 text-white" />
+                    </div>
+                    <h1 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+                      Resume Builder
+                    </h1>
+                  </div>
+                  <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-3 rounded-lg p-2">
+                      <span className="text-sm font-medium text-gray-300">Template Styles</span>
+                      <Select value={selectedTemplate} onValueChange={(value: string) => setSelectedTemplate(value as "modern" | "classic" | "creative")}>
+                        <SelectTrigger className="w-[140px] bg-gray-800 border-gray-700 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-800 border-gray-700">
+                          {templates.map((template) => (
+                            <SelectItem
+                              key={template.id}
+                              value={template.id}
+                              className="text-white hover:bg-gray-700"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <template.icon className="h-4 w-4" />
+                                <span>{template.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <ResumeManager
+                      templates={savedTemplates}
+                      onSaveTemplate={handleSaveTemplate}
+                    />
                     <div>
-                      <h2 className="text-lg font-semibold text-white">Resume Editor</h2>
-                      <p className="text-sm text-gray-400">Fill in your details below</p>
+                      <Button onClick={handlePerformClear} variant={"destructive"}>
+                        Clear Editor
+                      </Button>
                     </div>
                   </div>
-                  <Separator className="my-4 bg-gray-800" />
-                  <div className="h-[calc(100vh-12rem)] overflow-y-auto pr-4 custom-scrollbar">
-                    <ResumeEditor points={[]} onChange={() => {}} />
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </header>
 
-              <div className="lg:sticky lg:top-24 lg:self-start h-screen overflow-hidden">
-                <Card className="bg-gray-900 border-gray-800 h-full">
-                  <CardContent className="p-0 h-full">
-                    <div className="bg-white h-full overflow-y-auto overflow-x-auto custom-scrollbar">
-                      <div className="inline-block min-w-full">
-                        <ResumePreview selectedTemplate={selectedTemplate} />
+              <main className="max-w-8xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <Card className="bg-gray-900 border-gray-800">
+                    <CardContent className="p-6">
+                      <div className="mb-6 flex items-center justify-between">
+                        <div>
+                          <h2 className="text-lg font-semibold text-white">Resume Editor</h2>
+                          <p className="text-sm text-gray-400">Fill in your details below</p>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </main>
+                      <Separator className="my-4 bg-gray-800" />
+                      <div className="h-[calc(100vh-12rem)] overflow-y-auto pr-4 custom-scrollbar">
+                        <ResumeEditor points={[]} onChange={() => {}} />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <div className="lg:sticky lg:top-24 lg:self-start h-screen overflow-hidden">
+                    <Card className="bg-gray-900 border-gray-800 h-full">
+                      <CardContent className="p-0 h-full">
+                        <div className="bg-white h-full overflow-y-auto overflow-x-auto custom-scrollbar">
+                          <div className="inline-block min-w-full">
+                            <ResumePreview selectedTemplate={selectedTemplate} />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </main>
+            </>
+          )}
 
           <style jsx global>{`
             .custom-scrollbar {
@@ -200,4 +215,3 @@ function Page() {
 }
 
 export default Page;
-
