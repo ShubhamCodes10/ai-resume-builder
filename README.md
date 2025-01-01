@@ -38,7 +38,7 @@ Welcome to **BuildMyCV**, the all-in-one platform designed to help you craft **A
 ## Tech Stack
 
 - **Frontend**: Next.js, TypeScript, Tailwind CSS, Shadcn, Interactive UI
-- **Backend**: Node.js, ResiAPI, LangChain, Gemini AI
+- **Backend**: Node.js, ResiAPI, LangChain, Gemini AI, Prisma, PostgreSql, Firebase
 - **Authentication**: Clerk
 
 ---
