@@ -42,7 +42,7 @@ BuildMyCV is now fully complete and ready for you to use! Our platform combines 
 ## Tech Stack
 
 - **Frontend**: Next.js, TypeScript, Tailwind CSS, Shadcn, Interactive UI
-- **Backend**: Node.js, ResiAPI, LangChain, Gemini AI
+- **Backend**: Node.js, ResiAPI, LangChain, Gemini AI, Prisma, PostgreSql, Firebase
 - **Authentication**: Clerk
 - **Database**: PostgreSQL, Prisma
 - **AI Integration**: LangChain, Gemini AI for job analysis and resume assistance
