@@ -1,5 +1,3 @@
-'use client'
-
 import React from 'react'
 import { Facebook, Twitter, Linkedin, Link2Icon, Github } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -69,6 +67,19 @@ function Footer() {
           </div>
         </div>
   
+        {/* Product Hunt Badge */}
+        <div className="mt-8 text-center">
+          <a href="https://www.producthunt.com/posts/buildmycv?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-buildmycv" target="_blank">
+            <img 
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=765974&theme=light" 
+              alt="BuildMyCv - BuildMyCV: AI resume builder for ATS-friendly resumes & tips | Product Hunt" 
+              style={{ width: '250px', height: '54px' }} 
+              width="250" 
+              height="54"
+            />
+          </a>
+        </div>
+
         {/* Bottom Section */}
         <div className="mt-8 border-t border-gray-700 pt-4 text-center text-sm text-gray-400">
           © {new Date().getFullYear()} BuildMyCV. All rights reserved.
@@ -79,4 +90,3 @@ function Footer() {
 }
 
 export default Footer
-
