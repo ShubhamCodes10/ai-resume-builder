@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import { ResumeProvider } from "@/context/ResumeContext";
+import FloatingFeedbackButton from "@/components/FloatingFeedbackButton";
 
 export const metadata: Metadata = {
   title: "BuildMyCv - AI Resume Builder",
@@ -25,6 +26,7 @@ export default function RootLayout({
           <main className="flex-grow overflow-y-auto">
             <ResumeProvider>
             {children}
+            <FloatingFeedbackButton/>
             </ResumeProvider>
             <Toaster/>
             </main>

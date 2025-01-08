@@ -24,23 +24,22 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
     try {
       const element = resumeRef.current;
       const options = {
-        margin: [10, 10, 10, 10],
+        margin: 0,
         filename: `${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_resume.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
           scale: 2,
           useCORS: true,
-          backgroundColor: '#ffffff',
-          logging: true,
+          logging: false,
           windowWidth: 794,
           windowHeight: 1123,
         },
         jsPDF: {
-          unit: 'pt',
+          unit: 'mm',
           format: 'a4',
           orientation: 'portrait',
         },
-        pagebreak: { mode: 'avoid-all' },
+        pagebreak: { mode: ['css', 'avoid-all'] },
       };
 
       await html2pdf().from(element).set(options).save();
@@ -49,10 +48,15 @@ const ResumePreview: React.FC<{ selectedTemplate: keyof typeof templateStyles }>
       })
     } catch (error) {
       console.error('Error generating PDF:', error);
+      toast({
+        description: 'Error generating PDF. Please try again.',
+        variant: 'destructive',
+      });
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const renderSection = (title: string, children: React.ReactNode) => (
     <div className={cn("mb-1", styles.section)}>

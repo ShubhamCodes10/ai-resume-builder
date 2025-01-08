@@ -1,5 +1,8 @@
+'use client'
+
 import React from 'react'
-import { Facebook, Twitter, Linkedin, Link2Icon } from 'lucide-react'
+import { Facebook, Twitter, Linkedin, Link2Icon, Github } from 'lucide-react'
+import { Button } from "@/components/ui/button"
 
 function Footer() {
   return (
@@ -22,16 +25,13 @@ function Footer() {
             <a href="/pages/Analyse-Job-Fit" className="text-sm text-gray-300 hover:text-white transition-colors">
               Your Analysis
             </a>
-            <a href="/pages/Feedback" className="text-sm text-gray-300 hover:text-white transition-colors">
-              Give your Feedback
-            </a>
             <a href="/pages/Contact-Me" className="text-sm text-gray-300 hover:text-white transition-colors">
               Contact Us
             </a>
           </div>
   
-          {/* Social Media Links */}
-          <div className="flex space-x-6">
+          {/* Social Media Links and Github Star Button */}
+          <div className="flex items-center space-x-6">
             <a
               href="https://shubGupta.vercel.app"
               target="_blank"
@@ -50,15 +50,22 @@ function Footer() {
             >
               <Twitter className="w-6 h-6" />
             </a>
-            {/* <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white transition-colors"
-              aria-label="LinkedIn"
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="bg-blue-600 hover:bg-blue-700 hover:text-white text-white border-blue-500"
             >
-              <Linkedin className="w-6 h-6" />
-            </a> */}
+              <a
+                href="https://github.com/shubGupta10/AI-resume-builder"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2"
+              >
+                <Github className="w-4 h-4" />
+                <span>Star on GitHub</span>
+              </a>
+            </Button>
           </div>
         </div>
   
